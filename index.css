@@ -1,0 +1,125 @@
+body{
+  margin: 0;
+  padding: 0;
+  background-color: lightgray;
+  font-size: 20px;
+}
+
+.app{
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+}
+
+.autorization{
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+  border: 1px solid gray;
+  padding: 20px;
+  padding-top: 0px;
+/*  background-color: lightgray;*/
+}
+
+.lkHeader{
+  background-color: gray;
+  padding: 5px;
+  text-align: right;
+}
+
+.lkBallans{
+  text-align: center;
+}
+
+.lkContent{
+  display: flex;
+  flex-direction: row;
+/*  background-color: lightgray;*/
+  width: 97%;
+  margin: auto;
+}
+
+.reportTable{
+/*  width: 200px;*/
+/*  display: inline-block;*/
+/*  margin-le ft: 20px;*/
+  padding: 5px;
+  padding-top: 0;
+/*  background-color: lightgreen;*/
+}
+
+.reportTableHeader{
+  text-align: center;
+  height: 30px;
+  line-height: 30px;
+  font-weight: bold;
+}
+
+.reportString{
+  display: flex;
+  flex-direction: row;
+/*  justify-content: space-between;*/
+  border-bottom: 1px solid grey;
+}
+
+.reportStringDate{
+  padding-right: 10px;
+}
+
+.reportStringReason{
+
+}
+
+.reportStringSum{
+  flex-grow: 1;
+  text-align: right;
+  padding-left: 20px;
+/*  border-left: 1px solid gray;*/
+}
+
+.lkControlPanel{
+/*  display: inline-block;*/
+/*  background-color: lightblue;*/
+  flex-grow: 1;
+  text-align: center;
+}
+
+.adminCaption{
+  text-align: center;
+}
+
+.userInList{
+  display: flex;
+  flex-direction: row;
+  width: 200px;
+  cursor: pointer;
+}
+
+.userInList:hover{
+  background-color: lightgray;
+}
+
+.userInListBallans{
+  flex-grow: 1;
+  text-align: right;
+  padding-left: 20px;
+}
+
+.adminkaReportTable{
+/*  width: 300px;*/
+/*  display: inline-block;*/
+  margin-left: 120px;
+  margin-top: 20px;
+  padding: 5px;
+  padding-top: 0;
+/*  background-color: lightgreen;*/
+}
+
+.startCalculateButton{
+  margin-left: 50px;
+  font-weight: bold;
+  height: 40px;
+  margin-top: 40px;
+  background-color: gray;
+}
