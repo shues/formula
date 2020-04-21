@@ -4,12 +4,21 @@ const e = React.createElement;
 
 // авторизация пользователя
 class InputButtons extends React.Component {
+  constructor(props){
+    super(props);
+    this.changeUser = this.changeUser.bind(this);
+  }
+
+  changeUser(){
+    this.props.changeUser();
+  }
+
   render() {
     return (
       e('div', {
           className: 'inputButton'
         },
-        e('button', {}, 'Вход'),
+        e('button', {onClick: this.changeUser}, 'Вход'),
         e('button', {}, 'Регистрация')
       )
     );
@@ -17,6 +26,29 @@ class InputButtons extends React.Component {
 }
 
 class Autorization extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      login: '',
+      password: '',
+    }
+    this.changeLogin = this.changeLogin.bind(this);
+    this.changePassword = this.changePassword.bind(this);
+    this.changeUser = this.changeUser.bind(this);
+  }
+
+  changeLogin(e){
+    this.setState({login: e.target.value});
+  }
+
+  changePassword(e){
+    this.setState({password: e.target.value});
+  }
+
+  changeUser(){
+    this.props.changeUser(this.state.login);
+  }
+
   render() {
     return (
       e('div', {
@@ -25,13 +57,17 @@ class Autorization extends React.Component {
         e('h4', null, 'Введите имя пользователя и пароль!'),
         e('input', {
           type: 'text',
-          placeholder: 'login'
+          placeholder: 'login',
+          value: this.state.login,
+          onChange: this.changeLogin,
         }),
         e('input', {
           type: 'password',
-          placeholder: 'password'
+          placeholder: 'password',
+          value: this.state.password,
+          onChange: this.changePassword,
         }),
-        e(InputButtons)
+        e(InputButtons, {changeUser: this.changeUser})
       )
     );
   }
@@ -40,13 +76,43 @@ class Autorization extends React.Component {
 // личный кабинет пользователя
 
 class DoOperation extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      sum: '',
+    };
+    this.doOperation = this.doOperation.bind(this);
+    this.setSum = this.setSum.bind(this);
+  }
+
+  doOperation() {
+    //    console.log(this);
+    const sum = this.state.sum;
+    const type = this.props.type;
+    this.props.addOperation(sum, type);
+    this.setState({
+      sum: ''
+    });
+  }
+
+  setSum(e) {
+    console.log(e.target.value);
+    this.setState({
+      sum: e.target.value
+    });
+  }
+
   render() {
     return (
       e('div', null,
         e('input', {
-          type: 'number'
+          type: 'number',
+          value: this.state.sum,
+          onChange: this.setSum,
         }),
-        e('button', null, this.props.caption)
+        e('button', {
+          onClick: this.doOperation
+        }, this.props.caption)
       )
     );
   }
@@ -58,7 +124,9 @@ class AddAmount extends React.Component {
       e('div', null,
         e('h3', null, 'Внести средства на счет'),
         e(DoOperation, {
-          caption: 'Внести'
+          caption: 'Внести',
+          addOperation: this.props.addOperation,
+          type: 1,
         }))
     );
   }
@@ -70,8 +138,11 @@ class OutAmount extends React.Component {
       e('div', null,
         e('h3', null, 'Вывести средства со счета'),
         e(DoOperation, {
-          caption: 'Вывести'
-        }))
+          caption: 'Вывести',
+          addOperation: this.props.addOperation,
+          type: 0,
+        })
+      )
     );
   }
 }
@@ -82,8 +153,12 @@ class LkControlPanel extends React.Component {
       e('div', {
           className: 'lkControlPanel'
         },
-        e(AddAmount),
-        e(OutAmount))
+        e(AddAmount, {
+          addOperation: this.props.addOperation
+        }),
+        e(OutAmount, {
+          addOperation: this.props.addOperation
+        }))
     )
   }
 }
@@ -149,6 +224,11 @@ class LkOperationsReport extends React.Component {
 class LkHeader extends React.Component {
   constructor(props) {
     super(props);
+    this.exit = this.exit.bind(this);
+  }
+
+  exit(){
+    this.props.changeUser('');
   }
 
   render() {
@@ -157,7 +237,7 @@ class LkHeader extends React.Component {
           className: 'lkHeader'
         },
         e('span', null, this.props.name),
-        e('button', null, 'Выход')
+        e('button', {onClick: this.exit}, 'Выход')
       )
     );
   }
@@ -166,41 +246,6 @@ class LkHeader extends React.Component {
 class LkContent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      operations: [{
-        date: '25.12.2019 13:09:15',
-        type: 1,
-        reason: 'Пополнение',
-        sum: 20
-      }, {
-        date: '25.12.2019 13:09:15',
-        type: 0,
-        reason: 'Вывод средств',
-        sum: 10
-      }, {
-        date: '25.12.2019 13:09:15',
-        type: 1,
-        reason: 'Начисление',
-        sum: 50
-      }, {
-        date: '25.12.2019 13:09:15',
-        type: 1,
-        reason: 'Начисление',
-        sum: 40
-      }]
-    }
-  }
-
-  addOperation(sum, type){
-    const now = new Date();
-    const nowStr = now.getDate() + '.' + (now.getMonth()+1) + '.' + now.getFullYear() + ' ' + now.getHours() + ':' + now.getMinutes()
-    const newOper = {
-      date:
-      sum: sum,
-      type: type,
-    };
-    const operations = this.state.operations.push();
-    this.setState({operations: operations});
   }
 
   render() {
@@ -209,9 +254,13 @@ class LkContent extends React.Component {
           className: 'lkContent'
         },
         e(LkOperationsReport, {
-          data: this.state.operations
+          data: this.props.operations,
+          //          addOperation: this.props.addOperation,
         }),
-        e(LkControlPanel))
+        e(LkControlPanel, {
+          addOperation: this.props.addOperation
+        })
+      )
     );
   }
 }
@@ -221,22 +270,88 @@ class Lk extends React.Component {
     super(props);
     this.state = {
       ballans: 100,
-      userName: 'test_user',
-    }
+      operations: [
+        {
+          date: '25.12.2019 13:09:15',
+          type: 1,
+          reason: 'Пополнение',
+          sum: 20
+        },
+        {
+          date: '25.12.2019 13:09:15',
+          type: 0,
+          reason: 'Вывод средств',
+          sum: 10
+        },
+        {
+          date: '25.12.2019 13:09:15',
+          type: 1,
+          reason: 'Начисление',
+          sum: 50
+        },
+        {
+          date: '25.12.2019 13:09:15',
+          type: 1,
+          reason: 'Начисление',
+          sum: 40
+        }
+      ],
+    };
+    this.addOperation = this.addOperation.bind(this);
+    this.addZero = this.addZero.bind(this);
   }
 
+  addZero(par) {
+    if (parseInt(par) < 10) {
+      return '0' + par;
+    }
+    return par;
+  }
+
+  addOperation(sum, type) {
+    const now = new Date();
+    let nowStr = this.addZero(now.getDate()) + '.';
+    nowStr += this.addZero(now.getMonth() + 1) + '.';
+    nowStr += now.getFullYear() + ' ';
+    nowStr += this.addZero(now.getHours()) + ':';
+    nowStr += this.addZero(now.getMinutes()) + ':';
+    nowStr += this.addZero(now.getSeconds());
+
+    const newOper = {
+      date: nowStr,
+      type: type,
+      reason: type ? 'Пополнение' : 'Вывод средств',
+      sum: parseInt(sum),
+    };
+    let newOperations = this.state.operations.slice();
+    newOperations.push(newOper);
+    console.log(newOperations);
+    this.setState({
+      operations: newOperations,
+    });
+  }
+
+
+
   render() {
+    const ballans = this.state.operations.reduce(function (prev, el) {
+      return (el.type === 1) ? (prev + el.sum) : (prev - el.sum);
+    }, 0);
     return (
       e('div', {
           className: 'lk'
         },
         e(LkHeader, {
-          name: this.state.userName
+          name: this.props.user,
+          changeUser: this.props.changeUser,
         }),
         e(LkBallans, {
-          ballans: this.state.ballans
+          ballans: ballans
         }),
-        e(LkContent)
+        e(LkContent, {
+          operations: this.state.operations,
+          addOperation: this.addOperation,
+        })
       )
     );
   }
@@ -462,7 +577,8 @@ class Adminka extends React.Component {
     return (
       e('div', {},
         e(LkHeader, {
-          name: 'admin'
+          name: 'admin',
+          changeUser: this.props.changeUser,
         }),
         e('h3', {
           className: 'adminCaption'
@@ -474,11 +590,35 @@ class Adminka extends React.Component {
 }
 // Приложение
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: '',
+    }
+    this.changeUser = this.changeUser.bind(this);
+  }
+
+  changeUser(user) {
+    this.setState({
+      user: user
+    });
+  }
+
   render() {
-    //    return e('div', {className:"app"}, e(Autorization));
+    if (this.state.user === '') {
+      return e('div', {
+        className: "app"
+      }, e(Autorization, {changeUser: this.changeUser}));
+    };
+    if (this.state.user === 'admin') {
+      return e('div', {
+        className: "app"
+      }, e(Adminka, {changeUser: this.changeUser}));
+    };
+
     return e('div', {
       className: "app"
-    }, e(Lk));
+    }, e(Lk, {user: this.state.user, changeUser: this.changeUser}));
   }
 }
 
